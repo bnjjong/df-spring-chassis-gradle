@@ -1,0 +1,42 @@
+plugins {
+    id 'maven-publish'
+    id 'java'
+}
+
+group = 'io.df.henry'
+version = '0.0.1'
+
+repositories {
+    mavenLocal()    // maven local cache repository
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "deploy"
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url System.getenv("NEXUS_URL")+"/nexus/repository/maven-releases/"
+            allowInsecureProtocol = true
+            credentials {
+                username = System.getenv("NEXUS_USERNAME")
+                password = System.getenv("NEXUS_PASSWORD")
+            }
+        }
+    }
+}

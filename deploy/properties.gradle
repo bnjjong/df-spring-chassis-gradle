@@ -1,0 +1,24 @@
+ext {
+    versions = [
+            "lang": [
+                    "java"  : "21",
+                    "kotlin": "1.9.20"
+            ],
+            "lib" : [
+                    "lombok"   : "1.18.34",
+                    // https://mvnrepository.com/artifact/org.mapstruct/mapstruct
+                    "mapstruct": "1.6.2",
+                    //https://mvnrepository.com/artifact/org.assertj/assertj-core
+                    "assertj" : "32.6.3",
+                    // https://mvnrepository.com/artifact/net.javacrumbs.json-unit/json-unit-assertj
+                    "json-unit-assertj" : "3.4.1",
+            ],
+    ]
+    applyLib = [
+            "lombok"   : true,
+            "mapstruct": true,
+            "assertj"  : true,
+            "jsonpath" : true,
+
+    ]
+}
