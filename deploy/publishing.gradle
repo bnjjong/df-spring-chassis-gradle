@@ -1,0 +1,20 @@
+apply plugin: "maven-publish"
+
+publishing {
+    repositories {
+        if (nexus.enabled) {
+            maven {
+                url = version.endsWith("SNAPSHOT")
+                        ? System.getenv("NEXUS_URL")+"/df-repo/repository/maven-snapshots/"
+                        : System.getenv("NEXUS_URL")+"/df-repo/repository/maven-releases/"
+
+                allowInsecureProtocol = true
+
+                credentials {
+                    username = System.getenv("NEXUS_USERNAME")
+                    password = System.getenv("NEXUS_PASSWORD")
+                }
+            }
+        }
+    }
+}

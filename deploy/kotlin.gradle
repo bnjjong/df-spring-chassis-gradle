@@ -1,0 +1,44 @@
+apply plugin: "kotlin" // 코틀린 기본 설정
+apply plugin: "org.jetbrains.kotlin.jvm"
+apply plugin: "org.jetbrains.kotlin.kapt"
+if (applyLib.detekt) {
+    // 코틀린 정적 코드 분석 도구 적용 여부
+    apply plugin: "io.gitlab.arturbosch.detekt"
+}
+if (applyLib.ktlint) {
+    apply plugin: "org.jlleitschuh.gradle.ktlint"
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-reflect"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactor"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
+    implementation "io.github.microutils:kotlin-logging-jvm"
+}
+
+kotlin {
+    compileKotlin {
+        compilerOptions {
+            freeCompilerArgs.add("-Xjsr305=strict")
+            freeCompilerArgs.add("-Xjvm-default=all")
+        }
+    }
+    jvmToolchain {
+        languageVersion = JavaLanguageVersion.of("${versions.lang.java}")
+    }
+}
+
+if (applyLib.detekt) {
+    detekt {
+        buildUponDefaultConfig = true
+        allRules = false
+        ignoreFailures = true
+    }
+}
+
+if (applyLib.ktlint) {
+    ktlint {
+        ignoreFailures = true
+    }
+}

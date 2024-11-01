@@ -1,24 +1,58 @@
 ext {
     versions = [
-            "lang": [
+            "lang"  : [
                     "java"  : "21",
-                    "kotlin": "1.9.20"
+                    "kotlin": "1.9.23"
             ],
-            "lib" : [
-                    "lombok"   : "1.18.34",
+            "lib"   : [
+                    "lombok"                : "1.18.34",
                     // https://mvnrepository.com/artifact/org.mapstruct/mapstruct
-                    "mapstruct": "1.6.2",
+                    "mapstruct"             : "1.6.2",
+                    // https://github.com/junit-team/junit5/
+                    "junit5"                : "5.11.3",
                     //https://mvnrepository.com/artifact/org.assertj/assertj-core
-                    "assertj" : "32.6.3",
+                    "assertj"               : "32.6.3",
                     // https://mvnrepository.com/artifact/net.javacrumbs.json-unit/json-unit-assertj
-                    "json-unit-assertj" : "3.4.1",
+                    "json-unit-assertj"     : "3.4.1",
+                    // https://kotest.io/docs/next/quickstart#assertions-library
+                    "kotest"                : "5.9.1",
+                    // https://docs.spring.io/spring-boot/gradle-plugin/managing-dependencies.html
+                    "springBoot3"           : "3.3.5",
+                    // https://spring.io/projects/spring-cloud
+                    "springCloudForBoot3"   : "2023.0.3",
+                    // https://github.com/awspring/spring-cloud-aws?tab=readme-ov-file#compatibility-with-spring-project-versions
+                    "springCloudAwsForBoot3": "3.2.1",
+                    // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
+                    "springdoc"             : "1.8.0",
+                    // https://springdoc.org/
+                    "springdocStarter"      : "2.6.0",
+                    "swagger"               : "1.6.6",
+
             ],
+            "plugin": [
+                    "spring-dependencyManagement": "1.1.6", // https://plugins.gradle.org/plugin/io.spring.dependency-management
+                    "detekt"                     : "1.23.7", // https://plugins.gradle.org/plugin/io.gitlab.arturbosch.detekt
+                    "gradle-git-properties"      : "2.4.2", // https://plugins.gradle.org/plugin/com.gorylenko.gradle-git-properties
+                    "gradle-test-logger"         : "4.0.0", // https://plugins.gradle.org/plugin/com.adarshr.test-logger
+                    "gradle-use-latest-versions" : "0.2.18", // https://plugins.gradle.org/plugin/se.patrikerdes.use-latest-versions
+                    "gradle-versions"            : "0.51.0", // https://plugins.gradle.org/plugin/com.github.ben-manes.versions
+                    "ktlint"                     : "12.1.1",
+                    "semver-git"                 : "3.0.0",
+                    "sonarqube-gradle"           : "4.4.1.3373",
+            ]
+    ]
+    nexus = [
+            "enabled"          : true,
+            "supportGradleDist": false,
     ]
     applyLib = [
-            "lombok"   : true,
+            "spring"   : true,
+            "lombok"   : false,
             "mapstruct": true,
             "assertj"  : true,
             "jsonpath" : true,
-
+            "detekt"   : true, // 코틀린 정적 분석 도구
+            "ktlint"   : true,
     ]
+
 }

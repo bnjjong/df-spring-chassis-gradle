@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'io.df.henry'
-version = '0.0.1'
+version = '0.0.1.1'
 
 repositories {
     mavenLocal()    // maven local cache repository
@@ -31,7 +31,7 @@ publishing {
     }
     repositories {
         maven {
-            url System.getenv("NEXUS_URL")+"/nexus/repository/maven-releases/"
+            url System.getenv("NEXUS_URL")+"/df-repo/repository/maven-releases/"
             allowInsecureProtocol = true
             credentials {
                 username = System.getenv("NEXUS_USERNAME")

@@ -1,0 +1,13 @@
+rootProject.buildscript {
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.lang.kotlin}")
+        classpath("org.jetbrains.kotlin:kotlin-allopen:${versions.lang.kotlin}")
+        classpath("org.jetbrains.kotlin:kotlin-noarg:${versions.lang.kotlin}")
+        if (applyLib.detekt) {
+            classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${versions.plugin.detekt}"
+        }
+        if (applyLib.ktlint) {
+            classpath("org.jlleitschuh.gradle:ktlint-gradle:${versions.plugin.ktlint}")
+        }
+    }
+}

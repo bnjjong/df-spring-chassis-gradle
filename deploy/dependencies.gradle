@@ -1,0 +1,117 @@
+repositories {
+    mavenLocal()
+
+    if (nexus.enabled) {
+        maven {
+            url = System.getenv("NEXUS_URL")+"/df-repo/repository/maven-releases/"
+            allowInsecureProtocol = true
+            content {
+                includeGroup "io.df"
+            }
+            mavenContent {
+                releasesOnly()
+            }
+        }
+
+        maven {
+            url = System.getenv("NEXUS_URL")+"/df-repo/repository/maven-snapshots/"
+            allowInsecureProtocol = true
+            content {
+                includeGroup "io.df"
+            }
+            mavenContent {
+                snapshotsOnly()
+            }
+        }
+
+        mavenCentral()
+    } else {
+        mavenCentral()
+    }
+}
+
+
+apply plugin: "io.spring.dependency-management"
+dependencyManagement {
+    imports {
+        if (applyLib.spring) {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${versions.lib.springBoot3}"
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${versions.lib.springCloudForBoot3}"
+            mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${versions.lib.springCloudAwsForBoot3}"
+        }
+        mavenBom "org.junit:junit-bom:${versions.lib.junit5}"
+        mavenBom "io.github.resilience4j:resilience4j-bom:${versions.lib.resilience4j}"
+    }
+
+    dependencies {
+        dependency "com.datadoghq:dd-trace-api:${versions.lib.ddTraceApi}"
+        dependency "com.google.code.findbugs:jsr305:${versions.lib.findbugsJsr305}"
+        dependency "com.google.guava:guava:${versions.lib.guava}"
+        dependency "com.mysql:mysql-connector-j:${versions.lib.mysqlConnectorJ}"
+        dependency "commons-io:commons-io:${versions.lib.commonsIo}"
+        dependency "commons-net:commons-net:${versions.lib.commonsNet}"
+        dependency "commons-validator:commons-validator:${versions.lib.commonsValidator}"
+        dependency "io.github.classgraph:classgraph:${versions.lib.classgraph}"
+        dependency "io.github.microutils:kotlin-logging-jvm:${versions.lib.kotlinLoggingJvm}"
+        dependency "io.kotest:kotest-assertions-core:${versions.lib.kotest}"
+        dependency "io.kotest:kotest-property:${versions.lib.kotest}"
+        dependency "io.kotest:kotest-runner-junit5:${versions.lib.kotest}"
+        dependency "io.kotest.extensions:kotest-extensions-spring:${versions.lib.kotestExtensionsSpring}"
+        dependency "io.sentry:sentry:${versions.lib.sentry}"
+        dependency "io.springfox:springfox-bean-validators:${versions.lib.springfox}"
+        dependency "io.springfox:springfox-spring-webflux:${versions.lib.springfox}"
+        dependency "io.springfox:springfox-spring-webmvc:${versions.lib.springfox}"
+        dependency "io.springfox:springfox-swagger-ui:${versions.lib.springfox}"
+        dependency "io.springfox:springfox-swagger2:${versions.lib.springfox}"
+        dependency "io.swagger:swagger-annotations:${versions.lib.swagger}"
+        dependency "io.swagger:swagger-models:${versions.lib.swagger}"
+        dependency "io.vavr:vavr-jackson:${versions.lib.vavr}"
+        dependency "io.vavr:vavr:${versions.lib.vavr}"
+        dependency "junit:junit:${versions.lib.junit4}"
+        dependency "net.javacrumbs.json-unit:json-unit-assertj:${versions.lib.jsonUnitAssertj}"
+        dependency "org.apache.commons:commons-collections4:${versions.lib.commonsCollections4}"
+        dependency "org.apache.commons:commons-text:${versions.lib.commonsText}"
+        dependency "org.mapstruct:mapstruct-processor:${versions.lib.mapstruct}"
+        dependency "org.mapstruct:mapstruct:${versions.lib.mapstruct}"
+        dependency "org.mockito:mockito-core:${versions.lib.mockito}"
+        dependency "org.mockito:mockito-junit-jupiter:${versions.lib.mockito}"
+        dependency "org.mockito.kotlin:mockito-kotlin:${versions.lib.mockitoKotlin}"
+        dependency "org.postgresql:postgresql:${versions.lib.postgresql}"
+        dependency "org.redisson:redisson:${versions.lib.redisson}"
+        dependency "org.springdoc:springdoc-openapi-ui:${versions.lib.springdoc}"
+        dependency "org.springdoc:springdoc-openapi-starter-common:${versions.lib.springdocStarter}"
+        dependency "org.springdoc:springdoc-openapi-starter-webflux-ui:${versions.lib.springdocStarter}"
+        dependency "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.lib.springdocStarter}"
+        dependency "org.spockframework:spock-spring:${versions.lib.spock}"
+        dependency "nl.basjes.parse.useragent:yauaa:${versions.lib.yauaa}"
+    }
+}
+
+if (!dependencyControl.log4j) {
+    configurations.all {
+        exclude group: "log4j", module: "log4j"
+        exclude group: "org.slf4j", module: "slf4j-log4j12"
+        exclude group: "org.slf4j", module: "log4j-over-slf4j"
+        exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+        exclude group: "org.apache.logging.log4j", module: "log4j-api"
+    }
+}
+
+task allDependencies(type: DependencyReportTask) {
+    dependsOn allprojects.collect { "$it.path:dependencies" }
+}
+
+apply plugin: "com.github.ben-manes.versions"
+apply plugin: "se.patrikerdes.use-latest-versions"
+dependencyUpdates.resolutionStrategy {
+    componentSelection { rules ->
+        rules.all { ComponentSelection selection ->
+            boolean rejected = ["alpha", "beta", "rc", "cr", "m", "preview", "b", "ea"].any { qualifier ->
+                selection.candidate.version ==~ /(?i).*[.-]$qualifier[.\d-+]*/
+            }
+            if (rejected) {
+                selection.reject("Release candidate")
+            }
+        }
+    }
+}
