@@ -38,7 +38,7 @@ dependencies {
         testImplementation "org.assertj:assertj-core:${versions.lib.assertj}"
 
         //https://www.perplexity.ai/search/apache-commons-validator-e-dae-oAIBeQ3XRLGsVVL4hWtPRA#10
-        testImplementation "net.javacrumbs.json-unit:json-unit-assertj:${versions.lib.json-unit-assertj}"
+        testImplementation "net.javacrumbs.json-unit:json-unit-assertj:${versions.lib.jsonUnitAssertj}"
 
     }
 }
@@ -66,14 +66,14 @@ if (Boolean.getBoolean("idea.active")) {
 
                     // Uncomment if you want to do annotation processing in IntelliJ IDEA:
                     // https://www.perplexity.ai/search/apache-commons-validator-e-dae-oAIBeQ3XRLGsVVL4hWtPRA#17
-                    def annotationProcessorConfiguration = configurations.findByName("annotationProcessor")
-                    if (annotationProcessorConfiguration) {
-                        scopes.PROVIDED.plus += annotationProcessorConfiguration
-                    }
-                    def testAnnotationProcessorConfiguration = configurations.findByName("testAnnotationProcessor")
-                    if (testAnnotationProcessorConfiguration) {
-                        scopes.TEST.plus += testAnnotationProcessorConfiguration
-                    }
+//                    def annotationProcessorConfiguration = configurations.findByName("annotationProcessor")
+//                    if (annotationProcessorConfiguration) {
+//                        scopes.PROVIDED.plus += annotationProcessorConfiguration
+//                    }
+//                    def testAnnotationProcessorConfiguration = configurations.findByName("testAnnotationProcessor")
+//                    if (testAnnotationProcessorConfiguration) {
+//                        scopes.TEST.plus += testAnnotationProcessorConfiguration
+//                    }
                 }
             }
         }

@@ -1,4 +1,4 @@
-group ${globalGroup}
+group project.getProperties()["PROJECT_GROUP"]
 
 // 조건 확인: 이 줄은 프로젝트에 useGitVersion이라는 속성이 있는지 확인합니다. 만약 참이라면,
 // 버전 정보는 Git에서 가져와야 한다는 의미입니다.

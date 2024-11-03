@@ -1,16 +1,20 @@
 rootProject.buildscript {
+
     repositories {
         gradlePluginPortal()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
 
     dependencies {
-        classpath "com.adarshr:gradle-test-logger-plugin:${versions.plugin.gradle-test-logger}"
-        classpath "com.cinnober.gradle:semver-git:${versions.plugin.semver-git}"
-        classpath "com.github.ben-manes:gradle-versions-plugin:${versions.plugin.gradle-versions}"
-        classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:${versions.plugin.gradle-git-properties}"
-        classpath "io.spring.gradle:dependency-management-plugin:${versions.plugin.spring-dependencyManagement}"
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${versions.plugin.sonarqube-gradle}"
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${versions.lib.springBoot}"
-        classpath "se.patrikerdes:gradle-use-latest-versions-plugin:${versions.plugin.gradle-use-latest-versions}"
+        classpath "com.adarshr:gradle-test-logger-plugin:${versions.plugin.gradleTestLogger}"
+        classpath "com.cinnober.gradle:semver-git:${versions.plugin.semverGit}"
+        classpath "com.github.ben-manes:gradle-versions-plugin:${versions.plugin.gradleVersions}"
+        classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:${versions.plugin.gradleGitProperties}"
+        classpath "io.spring.gradle:dependency-management-plugin:${versions.plugin.springDependencyManagement}"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${versions.plugin.sonarqubeGradle}"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${versions.lib.springBoot3}"
+        classpath "se.patrikerdes:gradle-use-latest-versions-plugin:${versions.plugin.gradleUseLatestVersions}"
     }
 }
