@@ -1,0 +1,16 @@
+dependencies {
+    if (applyTestLib.kotest) {
+        testImplementation "junit:junit"
+        testImplementation "io.kotest:kotest-assertions-core"
+        testImplementation "io.kotest:kotest-property"
+        testImplementation "io.kotest.extensions:kotest-extensions-spring"
+
+        if (applyTestLib.junit5) {
+            testImplementation "io.kotest:kotest-runner-junit5"
+        }
+    }
+
+    if (applyTestLib.mockito) {
+        testImplementation "org.mockito.kotlin:mockito-kotlin"
+    }
+}

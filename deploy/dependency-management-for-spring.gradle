@@ -1,0 +1,9 @@
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:${versions.lib.springBoot3}"
+        // https://spring.io/projects/spring-cloud/
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${versions.lib.springCloudForBoot3}"
+        // https://github.com/awspring/spring-cloud-aws?tab=readme-ov-file#compatibility-with-spring-project-versions
+        mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${versions.lib.springCloudAwsForBoot3}"
+    }
+}
