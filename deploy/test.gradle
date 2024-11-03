@@ -1,0 +1,113 @@
+apply plugin: "jacoco"
+apply plugin: "com.adarshr.test-logger"
+
+ext["junit.version"] = versions.lib.junit4
+ext["junit-jupiter.version"] = versions.lib.junit5
+
+
+def buildDirectory = layout.buildDirectory.dir(".").get().asFile
+def jacocoDir = "$buildDirectory/jacoco"
+def jacocoUnitTestFile = "$jacocoDir/jacoco-ut.exec"        // buidDir/jacoco/jacoco-ut.exec
+def jacocoIntegrationTestFile = "$jacocoDir/jacoco-it.exec" // buidDir/jacoco/jacoco-it.exec
+def testReportsDir = "$buildDirectory/reports/tests"
+def testReportsUnitTestDir = "$testReportsDir/test/xml"
+def testReportsIntegrationTestDir = "$testReportsDir/integrationTest/xml"
+
+dependencies {
+
+    if (applyTestLib.junit5) {
+        testImplementation "org.junit.jupiter:junit-jupiter"
+        if (applyTestLib.mockito) {
+            testImplementation "org.mockito:mockito-core"
+            testImplementation "org.mockito:mockito-junit-jupiter"
+        }
+    }
+
+}
+
+
+
+configurations.all {
+    exclude group: "junit", module: "junit"
+    exclude group: "org.junit.vintage", module: "junit-vintage-engine"
+}
+
+// 이 스크립트는 JUnit5를 사용하여 단위 및 통합 테스트를 수행하고,
+// JaCoCo를 통해 코드 커버리지 리포트를 생성하며,
+// 각각의 테스트 결과를 XML 형식으로 저장하도록 구성되어 있습니다.
+if (applyTestLib.category.enabled) {
+    test {
+        if (applyTestLib.junit5) {
+            useJUnitPlatform { org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions options ->
+                // `applyTestLib.category.unitTestExclusions`에 정의된 특정 카테고리가 제외
+                options.setExcludeTags(applyTestLib.category.unitTestExclusions as Set)
+            }
+        }
+        jacoco {
+            destinationFile = file(jacocoUnitTestFile)
+        }
+        reports {
+            junitXml.required = true
+            junitXml.outputLocation = file(testReportsUnitTestDir)
+        }
+    }
+
+    task integrationTest(type: Test, group: "verification") {
+        shouldRunAfter test
+        if (applyTestLib.junit5) {
+            useJUnitPlatform {org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions options ->
+                options.setIncludeTags(applyTestLib.category.integrationTestInclusions as Set)
+            }
+        }
+        jacoco {
+            destinationFile = file(jacocoIntegrationTestFile)
+        }
+        reports {
+            junitXml.required = true
+            junitXml.outputLocation = file(testReportsIntegrationTestDir)
+        }
+    }
+    //  Gradle 빌드 라이프사이클의 일부인 `check` 작업이 실행될 때, 반드시 `integrationTest` 작업도 실행되도록 설정
+    check.dependsOn integrationTest
+} else {
+    test {
+        if (applyTestLib.junit5) {
+            useJUnitPlatform()
+        }
+        jacoco {
+            destinationFile = file(jacocoUnitTestFile)
+        }
+        reports {
+            junitXml.required = true
+            junitXml.outputLocation = file(testReportsUnitTestDir)
+        }
+    }
+}
+
+tasks.withType(Test) {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    // The JaCoCo plugin adds a JacocoTaskExtension extension to all tasks of type Test.
+    // Use task state to include or not task execution data
+    // https://docs.gradle.org/current/javadoc/org/gradle/api/tasks/TaskState.html
+    executionData(tasks.withType(Test).findAll { it.state.executed })
+
+    reports {
+        if (legacyReport) {
+            xml.enabled true
+        } else {
+            xml.required = true
+        }
+    }
+}
+
+if (project.hasProperty("skipTest")) {
+    if (applyTestLib.category.enabled) {
+        // 단위, 통합까지 수행.
+        gradle.startParameter.excludedTaskNames += ["test", "integrationTest"]
+    } else {
+        gradle.startParameter.excludedTaskNames += "test"
+    }
+}

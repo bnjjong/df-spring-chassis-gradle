@@ -1,0 +1,67 @@
+group ${globalGroup}
+
+// 조건 확인: 이 줄은 프로젝트에 useGitVersion이라는 속성이 있는지 확인합니다. 만약 참이라면,
+// 버전 정보는 Git에서 가져와야 한다는 의미입니다.
+if (project.hasProperty("useGitVersion")) {
+    // Git 명령 실행: try 블록이 시작되어 예외 처리를 준비합니다.
+    // 여기서 ByteArrayOutputStream 객체를 생성하여 Git 명령의 출력을 캡처합니다.
+    // exec 블록은 git describe --tags --dirty 명령을 실행합니다.
+    // 이 명령은 현재 커밋에 도달할 수 있는 가장 최근의 태그를 인간이 읽을 수 있는 문자열로 반환합니다.
+    // --dirty 플래그는 작업 디렉토리에 커밋되지 않은 변경 사항이 있을 경우 "-dirty"를 추가합니다.
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine "git", "describe", "--tags", "--dirty"
+            standardOutput = stdout
+        }
+        // 버전 설정: Git 명령의 출력 결과를 문자열로 변환하고, 공백을 제거한 후 프로젝트의 버전으로 설정합니다.
+        version stdout.toString().trim()
+    } catch (Exception e) {
+        // 예외 처리: 만약 예외가 발생하면 (예: Git이 설치되어 있지 않거나 저장소에 문제가 있을 경우),
+        // "0.0.0-YYYYMMDDHHMMSS" 형식의 기본 버전 문자열로 설정합니다.
+        // 여기서 타임스탬프는 빌드가 시도된 시간을 반영합니다.
+        version "0.0.0-${new Date().format("yyyyMMddHHmmss")}"
+    }
+// 환경 변수 확인: useGitVersion이 설정되지 않은 경우, VERSION이라는 환경 변수가 존재하는지 확인합니다.
+// 만약 존재한다면, 이 값을 프로젝트의 버전으로 사용합니다.
+}
+//else if (System.getenv("VERSION")) {
+//    version System.getenv("VERSION")
+//// 스냅샷 버전 관리: 두 가지 조건이 모두 충족되지 않으면, uniqueSnapshot이라는 속성이 있는지 확인합니다.
+//// 이 속성이 존재하면 스냅샷 버전의 접미사를 설정하여 커밋 수(<count>), 짧은 커밋 해시(<sha>),
+//// 그리고 커밋되지 않은 변경 사항 여부(<dirty>)를 포함하는 형식을 지정합니다.
+//} else {
+//    if (project.hasProperty("uniqueSnapshot")) {
+//        ext.snapshotSuffix = "<count>.g<sha><dirty>-SNAPSHOT"
+//    }
+//    // https://www.perplexity.ai/search/com-cinnober-gradle-semver-git-qdeT.6aRTaqDLskGhjj1AA#2
+//    apply plugin: "com.cinnober.gradle.semver-git"
+//}
+
+subprojects {
+    group rootProject.group
+    version rootProject.version
+}
+
+apply plugin: "idea"
+
+if (sonarqube.enabled) {
+    // SonarQube 분석을 수행할 때 Gradle의 컴파일 작업을 건너뛰도록 설정하는 시스템 속성
+    // `sonar` 태스크가 Gradle의 컴파일 태스크에 의존하지 않도록 하여, 프로젝트가 이미 컴파일된 상태에서 분석을 수행할 수 있게 함.
+    System.setProperty("sonar.gradle.skipCompile", "true")
+    apply plugin: "org.sonarqube"
+    // https://www.perplexity.ai/search/arae-kodeu-seolmyeongjom-haejw-UvxXOooVQYmGiEGltkzhMA#1
+    sonar {
+        properties {
+            property "sonar.host.url", sonarqube.url
+            property "sonar.sourceEncoding", "UTF-8"
+            property "sonar.token", System.getenv("SONARQUBE_ANALYSIS_TOKEN")
+        }
+    }
+}
+
+task versionFile() {
+    doLast {
+        new File(projectDir, "version.txt").text = "${version}"
+    }
+}

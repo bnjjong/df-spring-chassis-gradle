@@ -1,4 +1,5 @@
 ext {
+    globalGroup = "io.df.henry"
     versions = [
             "lang"  : [
                     "java"  : "21",
@@ -53,6 +54,23 @@ ext {
             "jsonpath" : true,
             "detekt"   : true, // 코틀린 정적 분석 도구
             "ktlint"   : true,
+    ]
+
+    applyTestLib = [
+            "assertj" : true,
+            "jsonpath": true,
+            "junit5"  : true,
+            "kotest"  : true,
+            "mockito" : true,
+            "category": [
+                    "enabled"                  : true,
+                    "unitTestExclusions"       : [
+                            "io.df.henry.test.IntegrationTest",
+                    ],
+                    "integrationTestInclusions": [
+                            "io.df.henry.test.IntegrationTest"
+                    ],
+            ]
     ]
 
 }
